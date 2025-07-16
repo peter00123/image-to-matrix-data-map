@@ -1,0 +1,37 @@
+from PIL import Image
+
+def image_to_ascii(image_path, greyscale_path='img_greyscale.png'):
+    # Open the image
+    image = Image.open(image_path)
+    # Convert the image to greyscale
+    greyscale_image = image.convert('L')
+    # Save the greyscale image
+    greyscale_image.save(greyscale_path)
+
+    sorted_chars = [
+        ' ', 
+        'i',  'T', 'F',  '3', 'Z', 'K', 'N',
+        'H', 'A', 'X',  'U', 'M', '5', 'B',  'R', 
+        'G', '0', '8',  'W'
+    ]
+
+    image = Image.open(greyscale_path)
+    pixels = image.load()
+    width, height = image.size
+    finalimage = []
+    for y in range(height):
+        for x in range(width):
+            pixel_value = pixels[x, y]
+            if pixel_value > 200:
+                finalimage.append(sorted_chars[0])  # blank
+            elif pixel_value < 30:
+                finalimage.append('w')
+            else:
+                idx = int((pixel_value - 30) / (170 / (len(sorted_chars) - 2))) + 1
+                idx = min(idx, len(sorted_chars) - 2)
+                finalimage.append(sorted_chars[idx])
+    for i in range(0, len(finalimage), width):
+        print(''.join(finalimage[i:i + width]))
+
+# Call the function
+image_to_ascii('img.png')
